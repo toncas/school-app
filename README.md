@@ -1,3 +1,1 @@
-PORT=3000
-DB_URI=
-NODE_ENV=development
+Readme is a work in progress, just like this app
