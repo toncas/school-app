@@ -2,10 +2,9 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
-const session = require('express-session');
-const passport = require('./config/passportConfig');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
+const ensureAuthenticated = require('./middlewares/authMiddleware');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -22,21 +21,8 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Session setup
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || 'your_secret_key',
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-
-// Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
-
 // Routes
-app.use('/api/users', userRoutes);
+app.use('/api/users', ensureAuthenticated, userRoutes);
 app.use('/api/auth', authRoutes);
 
 // Error Handling Middleware
